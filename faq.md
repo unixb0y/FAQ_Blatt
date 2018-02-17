@@ -150,6 +150,12 @@
 
 * Möglicherweise werden gar keine Ports generiert, falls die Methode inlined oder wegoptimiert wird.
 
+* Durch `synthesize` wird vermieden, dass Module inlined werden und deren Input- und Output Ports werden "generiert".
+
+## 1.3: Rund um FPGA
+
+* 
+
 
 
 
