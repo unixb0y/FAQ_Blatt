@@ -154,8 +154,94 @@
 
 ## 1.3: Rund um FPGA
 
-* 
+* FPGAs ermöglichen die Entwicklung von Hardware-Schaltungen, die nach fertiger Entwicklung als ASICs hergestellt werden können, haben aber auch abgesehen von der ASIC-Entwicklung eigene Einsatzzwecke.  
+Im Grunde sind sie für Anwendungen optimal, bei denen Hardwarebeschleuniger sinnvoll sind, ein eigener Chip sich aber nicht lohnt. Das kann daran liegen, dass die Funktion sich immer wieder ändert oder auch einfach, dass die Kosten für einen ASIC zu hoch sind.  
+Sie sollten Desktoprechnern vorgezogen werden, wenn spezialisierte Berechnungen sehr schnell vorgenommen werden müssen.
 
+* Liste:
+  * Verhaltensebene
+  * Systemebene 
+  * RTL-Ebene
+  * Logikebene
+  * Transistorebene
+  * Layoutebene
+
+* Kosten, Geschwindigkeit, Fläche
+
+* Längster Weg zwischen Registern / Pipeline Stufen. Direkter Einfluss auf die minimale Taktperiode / maximale Taktfrequenz.
+
+* BSV kritischer Pfad: TODO
+
+* SoC: System-on-Chip; Alle Komponenten eines Systems auf einem Chip. Wesentliche Teile sind CPU, GPU, Speicher, Hardwarebeschleuniger.
+
+* NEON ist eine SIMD Architektur, die eine bestimmte Operation auf Daten, die einige Bits breit sind, parallel ausführt. 
+
+* Cache-Kohärenz bedeutet, dass Speicherzugriffe nicht direkt an den Speicher gehen, sondern vorher in dem viel schnelleren Cache nach den Daten suchen. Wenn sie dort nicht vorhanden sind (Cache Miss), muss die gewöhnliche Anfrage an den Speicher gehen, wobei die angefragten Daten dann - für den nächsten Zugriff - im Cache abgelegt werden.  
+Im Fall eines Cache Miss, dauert der Speicherzugriff somit länger, allerdings ist Cache-kohärenter Speicherzugriff bei einem Cache Hit um einiges schneller.  
+Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und PL Cache-kohärent auf den Speicher zugreifen wollen und sich den Cache teilen. Dann könnte es sein, dass einer der beiden Teile des Caches überschreibt und der andere mehr Cache Misses erfährt als sonst.
+
+* Es werden in der Regel keine Softcores benutzt, weil sie um einiges langsamer und größer sind als Hardcores.
+
+* Die PL wird deshalb hauptsächlich für Hardware-Implementierungen von Algorithmen verwendet, bei denen dann teilweise durch massiv parallele Berechnungen an den passenden Stellen und fehlendem Overhead - da die Schaltung nur exakt das können muss was für den Algorithmus notwendig ist - sehr schnelle Ergebnisse geliefert werden können.
+
+* AXI(4) ist ein Protokoll für Datenaustausch.
+
+* ACP: Cache kohärent. HP: nicht Cache kohärent.
+
+* Größe (Fläche, Komplexität), Adressierungsart, Burst Transfer
+
+* Burst: Startadresse wird gesetzt und Datenmenge, woraufhin die gesamten Daten durch diese eine Anfrage geliefert werden.
+
+* IP-Blöcke: Intellectual Properties / Hardware-Designs inklusive Tests und Dokumentation, die in der Regel gekauft werden und eine bestimmte Funktion erfüllen. Sie können dann als Black Box in der eigenen Schaltung verwendet werden und man muss nicht das Rad neu erfinden. Z.B.: Video Encoder.
+
+* Signale außer in-/output : TODO
+
+* Sortieren nach Performance (spezifische Anwendung):
+  * ASIC
+  * FPGA
+  * GPGPU
+  * Manycore CPU
+  * Multicore CPU
+  * LPCPU
+  * SoC
+  * microController
+  * DSP
+
+* Sortieren nach NRC (Hardwarekosten):
+  * DSP
+  * microController
+  * SoC
+  * LPCPU
+  * FPGA
+  * Multicore CPU
+  * GPGPU
+  * ASIC
+  * Manycore CPU
+  
+* Sortieren nach Energieverbrauch:
+  * ASIC
+  * Manycore CPU 
+  * GPGPU
+  * Multicore CPU
+  * FPGA
+  * LPCPU
+  * SoC
+  * microController
+  * DSP
+
+* Power Wall + Memory Wall + ILP Wall = Brick Wall
+
+* LUTs, Block RAM, DSP tiles
+
+* Base Design = HDL, Logic Design = Logic Gates, Hardware Synthesis: Process from Base Design to Logic Design
+
+* spaltenorientiertes Design: TODO
+
+* TPC: TODO
+
+* AXI4 Interconnect IP: liefert AXI in-/output ports, kümmert sich um den Rest
+
+  
 
 
 
