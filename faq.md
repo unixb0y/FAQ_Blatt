@@ -38,7 +38,7 @@
   * `method Typ Name (Parameterliste); endmethod` -> Anfang & Ende einer Methodenimplementierung
 
 * Zuweisungsoperatoren:
-  * `<=`: Zuweisung an Register / CRegs / Module mit Put-Interface, Vergleich
+  * `<=`: Zuweisung an Register / CRegs / Vergleich
   * `<-`: Zuweisung mit Action
   * `=`: Zuweisung ohne Action
 
