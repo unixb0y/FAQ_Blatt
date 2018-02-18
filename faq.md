@@ -73,9 +73,14 @@
 
 ## 1.2: Weiterführende Elemente von Bluespec System Verilog
 
-* numeric type: TODO
+* numeric type: `fromInteger(valueOf(nums))`
 
-* Pipelines: TODO
+* Pipelines:
+  * statisch = Konstante Latenz von der Eingabe zur Ausgabe eines Datums, z.B. MIPS: immer 5 Takte für Fetch-Decode-Execute-Mem-Writeback
+  * dynamisch = Latenz ist datenabhängig variabel
+  * elastisch = Daten in unterschiedlichen Stufen schreiten mit unterschiedlichem Fortschritt durch Pipeline voran
+  * starr = Daten schreiten überall mit gleichem Fortschritt durch Pipeline voran.
+  Vgl. MIPS: alle Daten im Gleichschritt
 
 * Parallel / Nebenläufig:
   * Parallel: Echt gleichzeitig, nur innerhalb einer rule möglich
@@ -96,7 +101,7 @@
 
 * Wenn Konflikte auftreten, die ein nebenläufiges Feuern von Regeln verhindern, versucht er diese aufzulösen indem die Regeln in unterschiedlichen Takten nacheinander ausgeführt werden. Falls das aber Seiteneffekte hat und / oder willkürlich gewählt werden müsste und das Ergebnis von der Reihenfolge abhängt, werden Fehlermeldungen ausgegeben.
 
-* nested interfaces: TODO
+* nested interfaces: Bei _nested interfaces_ / Unterschnittstellen, definiert das Interface eines Moduls wiederum Instanzen anderer Interfaces. Diese Instanzen / deren Methoden müssen dann vom Modul implementiert werden.
 
 * `tagged union`s erlauben die Definition eines Typen, dessen tatsächliche Daten einen unterschiedlichen Typen haben. Beispielsweise kann man somit einen Datentyp MyNumber definieren, der je nach Anwendung entweder eine vorzeichenbehaftete oder eine nicht-vorzeichenbehaftete Zahl darstellen kann.
 
@@ -107,20 +112,38 @@
   `let number1 = tpl_1(myTuple);`, also die Funktion `tpl_N`mit `N = Index, beginnend bei 1, maximal 8` liefert das indizierte Element.
 
 
-* GALS: TODO
+* GALS bedeutet Globally asynchronous, locally synchronous
 
 * `extend`: Datenbreite wird vergrößert, um in größeres Speicherelement / Variable zu passen
 * `truncate`: Datenbreite wird verkleinert, um in ein kleineres Speicherelement / Variable zu passen
 
-* pack: TODO
+* pack: converts (packs) _from_ various types, including Bool,  Int, and UInt _to_ Bit.
 
-* unpack: TODO
+* unpack: converts _from_ Bit _to_ various types, including Bool, Int, and UInt.
 
-* TODO
+* Nein, pack und unpack ändern die Datenbreite nicht.
 
-* Typklassen sind die Klassen von Typen
+* Typklassen sind etwas wie Oberklassen, ein Typ ist dann eine Instanz einer Typklasse. Um einen Typ zu definieren, der z.B. von der Typklasse "Bits" erbt, kann man _deriving(Bits)_ verwenden.  
+  * Vorgefertigte Typklassen:
+    * Bits
+    * Eq
+    * Literal
+    * RealLiteral
+    * Arith
+    * Ord
+    * Bounded
+    * Bitwise
+    * BitReduction
+    * BitExtend   
 
-* CRegs
+  * Dazugehörige Methoden:  
+    * Bits: pack, unpack
+    * BitExtend: zeroExtend, signExtend, truncate
+    * Literal: fromInteger
+    * RealLiteral: fromReal
+    * numeric types: valueOf
+
+* CRegs ermöglichen, im selben Takt zu schreiben und zu lesen (über verschiedene Ports).
 
 * Semantik:
   * `Int#(5)` -> Rückgabetyp und -breite
@@ -142,7 +165,7 @@
 
 |descending_urgency|execution_order|                  preempts|
 |------------------|---------------|--------------------------|
-|           Urgency|      Earliness|TODO|
+|           Urgency|      Earliness|Wenn erste Regel feuern kann, tut sie das und verhindert das Feuern der zweiten Regel. Falls sie nicht feuern kann, behindert sie die zweite Regel nicht.|
 
 |mutually_exclusive|synthesize|
 |------------------|----------|
@@ -170,7 +193,7 @@ Sie sollten Desktoprechnern vorgezogen werden, wenn spezialisierte Berechnungen 
 
 * Längster Weg zwischen Registern / Pipeline Stufen. Direkter Einfluss auf die minimale Taktperiode / maximale Taktfrequenz.
 
-* BSV kritischer Pfad: TODO
+* In BSV bestimmt die längste (da kombinatorische) Rechenoperation in einer Regel den kritischen Pfad, weil alle Berechnungen einer Regel immer innerhalb eines Taktes ablaufen.
 
 * SoC: System-on-Chip; Alle Komponenten eines Systems auf einem Chip. Wesentliche Teile sind CPU, GPU, Speicher, Hardwarebeschleuniger.
 
@@ -194,7 +217,7 @@ Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und 
 
 * IP-Blöcke: Intellectual Properties / Hardware-Designs inklusive Tests und Dokumentation, die in der Regel gekauft werden und eine bestimmte Funktion erfüllen. Sie können dann als Black Box in der eigenen Schaltung verwendet werden und man muss nicht das Rad neu erfinden. Z.B.: Video Encoder.
 
-* Signale außer in-/output : TODO
+* Signale außer in-/output : Reset (TODO?)
 
 * Sortieren nach Performance (spezifische Anwendung):
   * ASIC
@@ -233,7 +256,13 @@ Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und 
 
 * LUTs, Block RAM, DSP tiles
 
-* Base Design = HDL, Logic Design = Logic Gates, Hardware Synthesis: Process from Base Design to Logic Design
+* Base Design = leeres Design, spezifisch für ein bestimmtes Board, mit Standardverdrahtungen und entsprechenden Namen für Zugang zu Speicher, I/O usw. und wird regulär vom Boardhersteller mitgeliefert.
+
+* Logic Design = Entwicklung und Test der eigentlichen Logik, die den Algorithmus ausführt.
+
+* Hardware Synthesis = PNR (Place and Route) sowie Übertragung des Designs auf die Hardware und entsprechendes Testen.
+  * Place = Operationen den Hardwareressourcen zuordnen
+  * Route = Verdrahtung, Sicherstellen von Timing-Constraints
 
 * spaltenorientiertes Design: TODO
 
