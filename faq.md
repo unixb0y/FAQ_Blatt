@@ -8,7 +8,7 @@
 
 * Ein Modul kann auf ein anderes zugreifen, indem es das instanziiert und an einen Bezeichner bindet, mit dem auf diese Instanz zugegriffen werden kann.
 
-* Nein
+* Nein, da Rekursionen nur in Software möglich sind, da sie einen Stack erfordern.
 
 * Methoden sind nach außen hin durch das Interface sichtbar. Funktionen können nur intern in Methoden und Rules verwendet werden und werden nicht im Interface definiert.
 
@@ -16,7 +16,7 @@
 
 * Regeln sind taktgebundene Abschnitte, die bei Erfüllen von deren CAN_FIRE und WILL_FIRE Bedingungen die enthaltenen Aktionen zur Taktflanke ausführen.
 
-* Alle Zuweisungen in einer Regel geschehen gleichzeitig und parallel, Regeln zueinander sind - falls es die Präzedenzen erlauben - nebenläufig, feuern also im besten Fall im selben Takt. Falls das nicht möglich ist, laufen sie nacheinander in verschiedenen Takten ab. Regeln können nur feuern, wenn sowohl guard als auch der Body es erlauben.
+* Alle Zuweisungen in einer Regel geschehen gleichzeitig und parallel, Regeln zueinander sind - falls es die Präzedenzen erlauben - nebenläufig, feuern also im besten Fall im selben Takt. Falls das nicht möglich ist, laufen sie nacheinander in verschiedenen Takten ab. Regeln können nur feuern, wenn sowohl Guard als auch der Body es erlauben.
 
 * Semantik:
   * `HelloBluespec` -> definiert Namen des Packages
@@ -24,6 +24,8 @@
   * `Empty` -> Kein Interface verwendet
   * `UInt#(32)` -> Typ des Registers
   * `flag` -> Name des Registers
+  * `<-` -> Zuweisungsoperator
+  * `maReg` -> Name des/eines Modules mit dem Inteface `Reg`
   * `24` -> Wert, womit das Register initialisiert wird
   * `ActionValue#(Int#(8))` -> Rückgabetyp der Methode
   * `foo` -> Name der Methode
@@ -36,7 +38,7 @@
   * `method Typ Name (Parameterliste); endmethod` -> Anfang & Ende einer Methodenimplementierung
 
 * Zuweisungsoperatoren:
-  * `<=`: Zuweisung an Register / CRegs, Vergleich
+  * `<=`: Zuweisung an Register / CRegs / Module mit Put-Interface, Vergleich
   * `<-`: Zuweisung mit Action
   * `=`: Zuweisung ohne Action
 
@@ -118,7 +120,6 @@
 * `truncate`: Datenbreite wird verkleinert, um in ein kleineres Speicherelement / Variable zu passen
 
 * pack: converts (packs) _from_ various types, including Bool,  Int, and UInt _to_ Bit.
-
 * unpack: converts _from_ Bit _to_ various types, including Bool, Int, and UInt.
 
 * Nein, pack und unpack ändern die Datenbreite nicht.
@@ -179,7 +180,7 @@
 
 * FPGAs ermöglichen die Entwicklung von Hardware-Schaltungen, die nach fertiger Entwicklung als ASICs hergestellt werden können, haben aber auch abgesehen von der ASIC-Entwicklung eigene Einsatzzwecke.  
 Im Grunde sind sie für Anwendungen optimal, bei denen Hardwarebeschleuniger sinnvoll sind, ein eigener Chip sich aber nicht lohnt. Das kann daran liegen, dass die Funktion sich immer wieder ändert oder auch einfach, dass die Kosten für einen ASIC zu hoch sind.  
-Sie sollten Desktoprechnern vorgezogen werden, wenn spezialisierte Berechnungen sehr schnell vorgenommen werden müssen.
+Sie sollten Desktoprechnern vorgezogen werden, wenn spezialisierte Berechnungen sehr schnell und mit hohem Durchsatz vorgenommen werden müssen.
 
 * Liste:
   * Verhaltensebene
@@ -195,13 +196,13 @@ Sie sollten Desktoprechnern vorgezogen werden, wenn spezialisierte Berechnungen 
 
 * In BSV bestimmt die längste (da kombinatorische) Rechenoperation in einer Regel den kritischen Pfad, weil alle Berechnungen einer Regel immer innerhalb eines Taktes ablaufen.
 
-* SoC: System-on-Chip; Alle Komponenten eines Systems auf einem Chip. Wesentliche Teile sind CPU, GPU, Speicher, Hardwarebeschleuniger.
+* SoC: System-on-Chip; Alle Komponenten eines Systems auf einem Chip. Wesentliche Teile sind CPU, GPU, Speicher, Hardwarebeschleuniger, Controller(z.B. Audio, Display,...).
 
-* NEON ist eine SIMD Architektur, die eine bestimmte Operation auf Daten, die einige Bits breit sind, parallel ausführt. 
+* NEON ist eine SIMD Architektur, die eine bestimmte Operation auf Daten, die einige Bits breit sind, parallel ausführt. (Vektorrechner/Vektorprozessor/Array-Prozessor)
 
 * Cache-Kohärenz bedeutet, dass Speicherzugriffe nicht direkt an den Speicher gehen, sondern vorher in dem viel schnelleren Cache nach den Daten suchen. Wenn sie dort nicht vorhanden sind (Cache Miss), muss die gewöhnliche Anfrage an den Speicher gehen, wobei die angefragten Daten dann - für den nächsten Zugriff - im Cache abgelegt werden.  
 Im Fall eines Cache Miss, dauert der Speicherzugriff somit länger, allerdings ist Cache-kohärenter Speicherzugriff bei einem Cache Hit um einiges schneller.  
-Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und PL Cache-kohärent auf den Speicher zugreifen wollen und sich den Cache teilen. Dann könnte es sein, dass einer der beiden Teile des Caches überschreibt und der andere mehr Cache Misses erfährt als sonst.
+Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und PL Cache-kohärent auf den Speicher zugreifen wollen und sich den Cache teilen. Dann könnte es sein, dass einer der beiden Teile des Caches überschreibt und der andere mehr Cache Misses erfährt als sonst. Ebenfalls muss der Cache immer aktuell gehalten werden, wenn z.B. Ein Beschleuniger in den L2 Cache schreibt müssen jene Variablen, die im L1 Cache abgebildet sind, in den L1 Cache übertragen werden.
 
 * Es werden in der Regel keine Softcores benutzt, weil sie um einiges langsamer und größer sind als Hardcores.
 
@@ -235,24 +236,26 @@ Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und 
   * microController
   * SoC
   * LPCPU
-  * FPGA
-  * Multicore CPU
+  * FPGA, Multicore CPU
   * GPGPU
-  * ASIC
   * Manycore CPU
+  * ASIC
   
 * Sortieren nach Energieverbrauch:
-  * ASIC
-  * Manycore CPU 
   * GPGPU
+  * Manycore CPU
   * Multicore CPU
   * FPGA
   * LPCPU
+  * ASIC
   * SoC
   * microController
   * DSP
 
 * Power Wall + Memory Wall + ILP Wall = Brick Wall
+  * Power Wall: Mit steigendem Takt steigt die Stromaufnahme und damit die Wärmeabgabe, welche durch die Kühlung beschränkt ist.
+  * Memory Wall: Speicherperformance entwickelt sich linear und nicht expotenziell, was nur mit Hilfe von Caches umgangen werden kann.
+  * ILP Wall: Instruktionen können nicht mit unendlicher Paralellität ausgeführt werden, wird durch Abhängigkeien klassischer Computer beschränkt.
 
 * LUTs, Block RAM, DSP tiles
 
