@@ -289,15 +289,15 @@ Composition: Größe der einzelnen Thread Units auf jedem Kernel
 * Wie funktioniert die Kommunikation über ein Memory-Mapped AXI4Lite Control Register File?  
   Master spricht Slave über seine Adresse an, Crossbar Switch erstellt eine point-to-point connection zwischen den Beiden
 
+* Zeitverhalten:
 
-
-
-
-
-
-
-
-
+|      Zeitverhalten|                            Ebene|
+|-------------------|---------------------------------|
+|              keins|    Verhaltenebene<br>Systemebene|
+|Digitale Simulation|                        RTL-Ebene|
+|        abschätzbar|               Logik-/Gatterebene|
+| Analoge Simulation|                  Transistorebene|
+|              exakt|                      Layoutebene|
 
 
 
