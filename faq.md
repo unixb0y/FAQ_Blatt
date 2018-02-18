@@ -73,13 +73,13 @@
   endmethod
 ```
 
-## 1.2: Weiterführende Elemente von Bluespec System Verilog
+## 1.2: Weiterführende Elemente von Bluespec System Verilog
 
 * numeric type: `fromInteger(valueOf(nums))`
 
 * Pipelines:
-  * statisch = Konstante Latenz von der Eingabe zur Ausgabe eines Datums, z.B. MIPS: immer 5 Takte für Fetch-Decode-Execute-Mem-Writeback
-  * dynamisch = Latenz ist datenabhängig variabel
+  * statisch = Konstante Latenz von der Eingabe zur Ausgabe eines Datums, z.B. MIPS: immer 5 Takte für Fetch-Decode-Execute-Mem-Writeback
+  * dynamisch = Latenz ist datenabhängig variabel
   * elastisch = Daten in unterschiedlichen Stufen schreiten mit unterschiedlichem Fortschritt durch Pipeline voran
   * starr = Daten schreiten überall mit gleichem Fortschritt durch Pipeline voran.
   Vgl. MIPS: alle Daten im Gleichschritt
@@ -267,13 +267,29 @@ Ein weiterer Nachteil tritt auf, wenn verschiedene Komponenten wie z.B. CPU und 
   * Place = Operationen den Hardwareressourcen zuordnen
   * Route = Verdrahtung, Sicherstellen von Timing-Constraints
 
-* spaltenorientiertes Design: TODO
-
-* TPC: TODO
-
 * AXI4 Interconnect IP: liefert AXI in-/output ports, kümmert sich um den Rest
 
-  
+* Was bedeutet spaltenorientiertes Design? 
+Rekonfigurierbare Logikanteile durchzogen von Spalten von DSP/BRAM, so kann Logik einfach repliziert werden
+
+* Wie wird beim TPC vorgegangen, um ein serielles Programm zu verarbeiten?
+Computational Hotspots(kernels) identifizieren -> kernel code isolieren und nicht kritischen Code auf dem main Thread ausführen -> Hardware für jeden Thread replizieren 
+
+* Was versteht man bei TPC unter Parallel Processing Element, Thread Unit, Thread Pool und Composition?
+Parallel Processing Element: spalteorietiert, replizierte Hardware für jeden Kernel
+Thread Unit: PEs für jeden Kernel 
+Thread Pool: Abstraktion über Composition, besteht aus Thread Units
+jobs kommen rein werden auf dem ersten freien PE ausgeführt, Antworten können out-of-order entgegengenommen werden
+Composition: Größe der einzelnen Thread Units auf jedem Kernel 
+
+* Wie spaltet der TPC das Design auf und welche Vorteile bringt das mit sich? 
+In Architektur( organisiert Thread Units und PEs + Board/Plattform unabhängig) und Plattform(host-memory + hardware Abhängig), so können Hardware-Abhängige Teile auf die Plattform isoliert werden
+
+* Um was kümmert sich ein AXI4 Interconnect IP? liefert Slave und Master Ports für die Kommunikation(bis zu 16 mit 16), wischen PEs und host
+
+* Wie funktioniert die Kommunikation über ein Memory-Mapped AXI4Lite Control Register File?
+Master spricht Slave über seine Adresse an, Crossbar Switch erstellt eine point-to-point connection zwischen den Beiden
+
 
 
 
